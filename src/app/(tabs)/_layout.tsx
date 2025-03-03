@@ -10,7 +10,7 @@ function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Feed",
+          title: "Home",
           headerTitle: "Reddit",
           headerTintColor: "#FF5700",
           tabBarIcon: ({ color }) => (
@@ -31,6 +31,7 @@ function TabLayout() {
         name="create"
         options={{
           title: "Create",
+
           tabBarIcon: ({ color }) => (
             <Ionicons name="create" color={color} size={24} />
           ),
