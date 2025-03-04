@@ -1,12 +1,7 @@
-import { Redirect, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
-import { useAuth } from "../../providers/AuthProvider";
-import { ActivityIndicator } from "react-native";
 
 function TabLayout() {
-  const { session, mounting, user } = useAuth();
-  if (mounting) return <ActivityIndicator />;
-  if (!session) return <Redirect href={"/auth"} />;
   return (
     <Tabs
       screenOptions={{
@@ -14,7 +9,7 @@ function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "Home",
           headerTitle: "Reddit",
