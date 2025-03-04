@@ -9,3 +9,11 @@ export const authZodForm = z.object({
   }),
 });
 export type authZodForm = z.infer<typeof authZodForm>;
+
+export const postZod = z.object({
+  title: z.string().min(5, { message: "Title at least 5 characters long" }),
+  description: z.string().optional(),
+  image: z.string().optional(),
+});
+
+export type postZod = z.infer<typeof postZod>;

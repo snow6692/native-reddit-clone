@@ -34,8 +34,10 @@ function TabLayout() {
           title: "Create",
 
           tabBarIcon: ({ color }) => (
-            <Ionicons name="create" color={color} size={24} />
+            <AntDesign name="plus" color={color} size={24} />
           ),
+          headerShown: false,
+          tabBarStyle: { display: "none" },
         }}
       />
       <Tabs.Screen
