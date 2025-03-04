@@ -23,6 +23,7 @@ export default function PostListItem({
           borderBottomColor: "lightgrey",
           borderBottomWidth: 0.5,
           backgroundColor: "white",
+          width: "100%",
         }}
       >
         {/* HEADER */}
