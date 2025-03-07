@@ -10,6 +10,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
@@ -17,7 +18,7 @@ import { Link, router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { postZod } from "../../../validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { useSelectGroup } from "../../../store/communities";
 export default function Create() {
   const { control, formState, handleSubmit, reset } = useForm<postZod>({
     defaultValues: {
@@ -27,10 +28,12 @@ export default function Create() {
     },
     resolver: zodResolver(postZod),
   });
+  const { group, setGroup } = useSelectGroup();
 
   const goBack = () => {
     router.back();
     reset();
+    setGroup(null);
   };
 
   const onSubmit = (data: postZod) => {
@@ -69,8 +72,23 @@ export default function Create() {
             {/* Community selector */}
             <Link href={"groupSelector"} asChild>
               <Pressable style={styles.communityContainer}>
-                <Text style={styles.community}>r/</Text>
-                <Text style={{ fontWeight: "600" }}>Select a community</Text>
+                {group ? (
+                  <>
+                    <Image
+                      source={{ uri: group.image }}
+                      style={{ width: 20, height: 20, borderRadius: 10 }}
+                    />
+                    <Text style={{ fontWeight: "600" }}>{group.name}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.community}>r/</Text>
+                    <Text style={{ fontWeight: "600" }}>
+                      Select a community
+                    </Text>
+                  </>
+                )}
+
                 <AntDesign name="down" size={16} color="black" />
               </Pressable>
             </Link>
