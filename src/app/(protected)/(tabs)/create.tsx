@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { postZod } from "../../../validation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -67,11 +67,13 @@ export default function Create() {
             showsVerticalScrollIndicator={false}
           >
             {/* Community selector */}
-            <View style={styles.communityContainer}>
-              <Text style={styles.community}>r/</Text>
-              <Text style={{ fontWeight: "600" }}>Select a community</Text>
-              <AntDesign name="down" size={16} color="black" />
-            </View>
+            <Link href={"groupSelector"} asChild>
+              <Pressable style={styles.communityContainer}>
+                <Text style={styles.community}>r/</Text>
+                <Text style={{ fontWeight: "600" }}>Select a community</Text>
+                <AntDesign name="down" size={16} color="black" />
+              </Pressable>
+            </Link>
 
             {/* Inputs */}
             <Controller
