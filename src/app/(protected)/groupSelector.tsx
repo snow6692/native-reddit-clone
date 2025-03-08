@@ -7,26 +7,31 @@ import {
   View,
   TextInput,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
-import groups from "../../../assets/data/groups.json";
 import { useState } from "react";
 import { useSelectGroup } from "../../store/communities";
 import { Group } from "../../supabase.types";
+import { useGetGroups } from "../../api/groups";
 function GroupSelector() {
   const [searchValue, setSearchValue] = useState("");
   const { group, setGroup } = useSelectGroup();
-
-  const filteredGroups = groups.filter((group) =>
-    group.name.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  const { data: groups, error, isLoading } = useGetGroups(searchValue);
 
   const onGroupSelected = (item: Group) => {
     setGroup(item);
     router.back();
   };
+  if (isLoading) return <ActivityIndicator />;
+
+  if (error || !groups) return <Text>Error fetching groups</Text>;
+
+  // const filteredGroups = groups.filter((group) =>
+  //   group.name.toLowerCase().includes(searchValue.toLowerCase())
+  // );
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -89,7 +94,7 @@ function GroupSelector() {
           )}
         </View>
         <FlatList
-          data={filteredGroups}
+          data={groups}
           renderItem={({ item }) => (
             <Pressable
               onPress={() => onGroupSelected(item)}

@@ -39,5 +39,6 @@ export function useGetPostById(id: string) {
     queryKey: ["post", id],
     queryFn: () => fetchPostById(id),
     enabled: !!id,
+    // staleTime: 3000,  (consider it up to date for 3 seconds  )
   });
 }
