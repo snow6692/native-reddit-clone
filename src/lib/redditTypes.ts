@@ -1,4 +1,4 @@
-import { Tables } from "./supabase.types";
+import { Tables, TablesInsert } from "./supabase.types";
 
 export type PostWithGroupAndUser = Tables<"posts"> & {
   user: Tables<"users">;
@@ -6,3 +6,4 @@ export type PostWithGroupAndUser = Tables<"posts"> & {
 };
 
 export type Group = Tables<"groups">;
+

@@ -19,6 +19,10 @@ import { Controller, useForm } from "react-hook-form";
 import { postZod } from "../../../validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSelectGroup } from "../../../store/communities";
+import { useCreatePost } from "../../../api/posts";
+import { useAuth } from "../../../providers/AuthProvider";
+import { Toast } from "react-native-toast-notifications";
+import { useQueryClient } from "@tanstack/react-query";
 export default function Create() {
   const { control, formState, handleSubmit, reset } = useForm<postZod>({
     defaultValues: {
@@ -29,6 +33,12 @@ export default function Create() {
     resolver: zodResolver(postZod),
   });
   const { group, setGroup } = useSelectGroup();
+  const { user } = useAuth();
+  const user_id = user?.id;
+  if (!user_id) return <Text> Login in first</Text>;
+
+  const { mutate, isPending } = useCreatePost();
+  const queryClient = useQueryClient();
 
   const goBack = () => {
     router.back();
@@ -37,14 +47,35 @@ export default function Create() {
   };
 
   const onSubmit = (data: postZod) => {
-    alert(
-      `Title is :${data.title} ${
-        data.description ? ` description is ${data.description}` : ""
-      } `
-    );
-    reset();
-  };
+    if (!group?.id) {
+      Toast.show("Please select a group first", { type: "error" });
+      return;
+    }
 
+    mutate(
+      {
+        group_id: group.id,
+        title: data.title,
+        user_id,
+        description: data.description,
+      },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            const postId = data.id;
+
+            Toast.show("Post Added Successfully", { type: "success" });
+            reset();
+            queryClient.invalidateQueries({ queryKey: ["posts"] });
+            router.push(`/post/${postId}`);
+          }
+        },
+        onError: (err) => {
+          Toast.show("Failed to create post");
+        },
+      }
+    );
+  };
   return (
     <SafeAreaView style={{ backgroundColor: "white", flex: 1, padding: 20 }}>
       {/* Header */}
@@ -55,8 +86,10 @@ export default function Create() {
         }}
       >
         <AntDesign name="close" size={30} color={"black"} onPress={goBack} />
-        <Pressable onPress={handleSubmit(onSubmit)}>
-          <Text style={styles.postText}>Post</Text>
+        <Pressable onPress={handleSubmit(onSubmit)} disabled={isPending}>
+          <Text style={styles.postText}>
+            {isPending ? "Posting..." : "Post"}
+          </Text>
         </Pressable>
       </View>
 
@@ -74,10 +107,12 @@ export default function Create() {
               <Pressable style={styles.communityContainer}>
                 {group ? (
                   <>
-                    <Image
-                      source={{ uri: group.image }}
-                      style={{ width: 20, height: 20, borderRadius: 10 }}
-                    />
+                    {group.image ? (
+                      <Image
+                        source={{ uri: group.image }}
+                        style={{ width: 20, height: 20, borderRadius: 10 }}
+                      />
+                    ) : null}
                     <Text style={{ fontWeight: "600" }}>{group.name}</Text>
                   </>
                 ) : (

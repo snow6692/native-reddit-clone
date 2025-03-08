@@ -5,7 +5,13 @@ import Logout from "../../../components/Logout";
 import { useGetPosts } from "../../../api/posts";
 
 function HomeScreen() {
-  const { data: posts, error, isLoading } = useGetPosts();
+  const {
+    data: posts,
+    error,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useGetPosts();
 
   if (isLoading) return <ActivityIndicator />;
   if (error) return <Text> Something went wrong try again later </Text>;
@@ -15,6 +21,8 @@ function HomeScreen() {
       <FlatList
         data={posts}
         renderItem={({ item }) => <PostListItem post={item} />}
+        onRefresh={refetch}
+        refreshing={isRefetching}
       />
     </View>
   );

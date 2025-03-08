@@ -1,11 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { supabase } from "../lib/supabase";
+import { TablesInsert } from "../lib/supabase.types";
 
 //posts with relations
 const fetchPosts = async () => {
   const { data, error } = await supabase
     .from("posts")
-    .select("*, group:groups(*), user:users!posts_user_id_fkey(*)");
+    .select("*, group:groups(*), user:users!posts_user_id_fkey(*)")
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error(error);
@@ -40,5 +42,29 @@ export function useGetPostById(id: string) {
     queryFn: () => fetchPostById(id),
     enabled: !!id,
     // staleTime: 3000,  (consider it up to date for 3 seconds  )
+  });
+}
+
+// type CreatePostTypes = {
+//   title: string;
+//   group_id: string;
+//   user_id: string;
+//   description?: string;
+// };
+export type CreatePostTypes = TablesInsert<"posts">;
+
+const createPost = async (newPost: CreatePostTypes) => {
+  const { data, error } = await supabase
+    .from("posts")
+    .insert(newPost)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+};
+
+export function useCreatePost() {
+  return useMutation({
+    mutationFn: createPost,
   });
 }
