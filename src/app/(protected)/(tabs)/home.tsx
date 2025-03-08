@@ -2,12 +2,8 @@ import React, { useState, useEffect } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import PostListItem from "../../../components/PostListItem";
 import Logout from "../../../components/Logout";
-import { Tables } from "../../../lib/types";
 import { useGetPosts } from "../../../api/posts";
-export type PostWithGroupAndUser = Tables<"posts"> & {
-  user: Tables<"users">;
-  group: Tables<"groups">;
-};
+
 function HomeScreen() {
   const { data: posts, error, isLoading } = useGetPosts();
 

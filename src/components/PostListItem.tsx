@@ -3,8 +3,8 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Post } from "../supabase.types";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Link } from "expo-router";
-import { Tables } from "../lib/types";
-import { PostWithGroupAndUser } from "../app/(protected)/(tabs)/home";
+import { Tables } from "../lib/supabase.types";
+import { PostWithGroupAndUser } from "../lib/redditTypes";
 
 type PostListItemProps = {
   post: PostWithGroupAndUser;
@@ -18,8 +18,8 @@ export default function PostListItem({
   const ShowImage = isDetailedPost || post.image;
   const ShowDescription = isDetailedPost || !post.image;
   return (
-    <Link href={`post/${post.id}`}>
-      <View
+    <Link href={`post/${post.id}`} asChild>
+      <Pressable
         style={{
           paddingHorizontal: 15,
           paddingVertical: 10,
@@ -46,7 +46,7 @@ export default function PostListItem({
               <Text
                 style={{ color: "grey", fontSize: 13, alignSelf: "flex-start" }}
               >
-                {formatDistanceToNowStrict(new Date(post.created_at))}
+                {formatDistanceToNowStrict(new Date(post.created_at!))}
               </Text>
             </View>
             {isDetailedPost && (
@@ -159,7 +159,7 @@ export default function PostListItem({
             />
           </View>
         </View>
-      </View>
+      </Pressable>
     </Link>
   );
 }
