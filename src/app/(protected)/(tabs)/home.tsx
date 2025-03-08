@@ -3,8 +3,15 @@ import { FlatList, Text, View } from "react-native";
 import PostListItem from "../../../components/PostListItem";
 import Logout from "../../../components/Logout";
 import { supabase } from "../../../lib/supabase";
+// import { Post } from "../../../types";
+import { Tables } from "../../../lib/types";
+
+export type PostWithGroupAndUser = Tables<"posts"> & {
+  user: Tables<"users">;
+  group: Tables<"groups">;
+};
 function HomeScreen() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<PostWithGroupAndUser[]>([]);
 
   useEffect(() => {
     fetchPost();
@@ -13,7 +20,7 @@ function HomeScreen() {
     const { data, error } = await supabase
       .from("posts")
       .select("*, group:groups(*), user:users!posts_user_id_fkey(*)");
-    if (error) console.log(error);
+    if (error) return console.log(error);
     setPosts(data);
   };
   return (

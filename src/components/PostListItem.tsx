@@ -3,9 +3,11 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Post } from "../types";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Link } from "expo-router";
+import { Tables } from "../lib/types";
+import { PostWithGroupAndUser } from "../app/(protected)/(tabs)/home";
 
 type PostListItemProps = {
-  post: Post;
+  post: PostWithGroupAndUser;
   isDetailedPost?: boolean;
 };
 
