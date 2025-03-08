@@ -86,7 +86,7 @@ export default function PostListItem({
           />
         )}
 
-        {ShowDescription && post.description  && (
+        {ShowDescription && post.description && (
           <Text numberOfLines={isDetailedPost ? undefined : 4}>
             {post.description}
           </Text>
