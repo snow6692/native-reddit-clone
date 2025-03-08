@@ -14,7 +14,7 @@ import { AntDesign } from "@expo/vector-icons";
 import groups from "../../../assets/data/groups.json";
 import { useState } from "react";
 import { useSelectGroup } from "../../store/communities";
-import { Group } from "../../types";
+import { Group } from "../../supabase.types";
 function GroupSelector() {
   const [searchValue, setSearchValue] = useState("");
   const { group, setGroup } = useSelectGroup();

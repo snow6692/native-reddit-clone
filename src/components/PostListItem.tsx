@@ -1,6 +1,6 @@
 import { Image, Pressable, Text, View, StyleSheet } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Post } from "../types";
+import { Post } from "../supabase.types";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Link } from "expo-router";
 import { Tables } from "../lib/types";

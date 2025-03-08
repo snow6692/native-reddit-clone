@@ -1,28 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import PostListItem from "../../../components/PostListItem";
 import Logout from "../../../components/Logout";
-import { supabase } from "../../../lib/supabase";
-// import { Post } from "../../../types";
 import { Tables } from "../../../lib/types";
-
+import { useGetPosts } from "../../../api/posts";
 export type PostWithGroupAndUser = Tables<"posts"> & {
   user: Tables<"users">;
   group: Tables<"groups">;
 };
 function HomeScreen() {
-  const [posts, setPosts] = useState<PostWithGroupAndUser[]>([]);
+  const { data: posts, error, isLoading } = useGetPosts();
 
-  useEffect(() => {
-    fetchPost();
-  }, []);
-  const fetchPost = async () => {
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*, group:groups(*), user:users!posts_user_id_fkey(*)");
-    if (error) return console.log(error);
-    setPosts(data);
-  };
+  if (isLoading) return <ActivityIndicator />;
+  if (error) return <Text> Something went wrong try again later </Text>;
   return (
     <View style={{ gap: 10, flex: 1 }}>
       <Logout />
