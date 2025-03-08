@@ -14,15 +14,15 @@ import { router } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
 import { useState } from "react";
 import { useSelectGroup } from "../../store/communities";
-import { Group } from "../../supabase.types";
+import { Group } from "../../lib/redditTypes";
 import { useGetGroups } from "../../api/groups";
 function GroupSelector() {
   const [searchValue, setSearchValue] = useState("");
-  const { group, setGroup } = useSelectGroup();
+  const { setGroup } = useSelectGroup();
   const { data: groups, error, isLoading } = useGetGroups(searchValue);
 
-  const onGroupSelected = (item: Group) => {
-    setGroup(item);
+  const onGroupSelected = (group: Group) => {
+    setGroup(group);
     router.back();
   };
   if (isLoading) return <ActivityIndicator />;
@@ -105,10 +105,12 @@ function GroupSelector() {
                 marginBottom: 20,
               }}
             >
-              <Image
-                source={{ uri: item.image }}
-                style={{ width: 40, aspectRatio: 1, borderRadius: 20 }}
-              />
+              {item.image ? (
+                <Image
+                  source={{ uri: item.image }}
+                  style={{ width: 40, aspectRatio: 1, borderRadius: 20 }}
+                />
+              ) : null}
               <Text style={{ fontWeight: "600" }}>{item.name}</Text>
             </Pressable>
           )}

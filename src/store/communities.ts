@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Group } from "../supabase.types";
+import { Group } from "../lib/redditTypes";
 
 type GroupState = {
   group: Group | null;
