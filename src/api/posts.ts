@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../lib/supabase";
 
 //posts with relations
-const fetchPost = async () => {
+const fetchPosts = async () => {
   const { data, error } = await supabase
     .from("posts")
     .select("*, group:groups(*), user:users!posts_user_id_fkey(*)");
@@ -17,6 +17,27 @@ const fetchPost = async () => {
 export function useGetPosts() {
   return useQuery({
     queryKey: ["posts"],
-    queryFn: fetchPost,
+    queryFn: fetchPosts,
+  });
+}
+
+const fetchPostById = async (id: string) => {
+  const { data, error } = await supabase
+    .from("posts")
+    .select("*, group:groups(*), user:users!posts_user_id_fkey(*)")
+    .eq("id", id)
+    .single();
+  if (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
+  return data;
+};
+
+export function useGetPostById(id: string) {
+  return useQuery({
+    queryKey: ["post", id],
+    queryFn: () => fetchPostById(id),
+    enabled: !!id,
   });
 }
