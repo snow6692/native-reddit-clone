@@ -61,17 +61,14 @@ export default function Create() {
       },
       {
         onSuccess: (data) => {
-          if (data) {
-            const postId = data.id;
+          Toast.show("Post Added Successfully", { type: "success" });
+          reset();
 
-            Toast.show("Post Added Successfully", { type: "success" });
-            reset();
-            queryClient.invalidateQueries({ queryKey: ["posts"] });
-            router.push(`/post/${postId}`);
-          }
+          queryClient.invalidateQueries({ queryKey: ["posts"] });
+          goBack();
         },
         onError: (err) => {
-          Toast.show("Failed to create post");
+          Toast.show("Failed to create post" + err);
         },
       }
     );

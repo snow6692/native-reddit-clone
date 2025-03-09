@@ -45,12 +45,7 @@ export function useGetPostById(id: string) {
   });
 }
 
-// type CreatePostTypes = {
-//   title: string;
-//   group_id: string;
-//   user_id: string;
-//   description?: string;
-// };
+
 export type CreatePostTypes = TablesInsert<"posts">;
 
 const createPost = async (newPost: CreatePostTypes) => {
