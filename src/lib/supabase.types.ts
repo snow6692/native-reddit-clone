@@ -188,16 +188,19 @@ export type Database = {
           created_at: string | null
           post_id: string
           user_id: string
+          value: number
         }
         Insert: {
           created_at?: string | null
           post_id: string
           user_id: string
+          value?: number
         }
         Update: {
           created_at?: string | null
           post_id?: string
           user_id?: string
+          value?: number
         }
         Relationships: [
           {
@@ -257,7 +260,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_post_upvotes: {
+        Args: {
+          post_id: string
+        }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

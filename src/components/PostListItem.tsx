@@ -1,9 +1,7 @@
 import { Image, Pressable, Text, View, StyleSheet } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Post } from "../supabase.types";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Link } from "expo-router";
-import { Tables } from "../lib/supabase.types";
 import { PostWithGroupAndUser } from "../lib/redditTypes";
 
 type PostListItemProps = {
@@ -17,6 +15,7 @@ export default function PostListItem({
 }: PostListItemProps) {
   const ShowImage = isDetailedPost || post.image;
   const ShowDescription = isDetailedPost || !post.image;
+
   return (
     <Link href={`post/${post.id}`} asChild>
       <Pressable
@@ -32,10 +31,17 @@ export default function PostListItem({
       >
         {/* HEADER */}
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Image
-            source={{ uri: post.group.image }}
-            style={{ width: 20, height: 20, borderRadius: 10, marginRight: 5 }}
-          />
+          {post.image ? (
+            <Image
+              source={{ uri: post.group.image! }}
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: 10,
+                marginRight: 5,
+              }}
+            />
+          ) : null}
           <View>
             <View style={{ flexDirection: "row", gap: 5 }}>
               <Text
@@ -110,7 +116,7 @@ export default function PostListItem({
                   alignSelf: "center",
                 }}
               >
-                {post.upvotes}
+                {post.upvotes ?? 0}
               </Text>
               <View
                 style={{
@@ -140,7 +146,7 @@ export default function PostListItem({
                   alignSelf: "center",
                 }}
               >
-                {post.nr_of_comments}
+                {/* {post.nr_of_comments} */} 5
               </Text>
             </View>
           </View>

@@ -7,8 +7,6 @@ import { useDeletePost, useGetPostById } from "../../../api/posts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Toast } from "react-native-toast-notifications";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "../../../lib/supabase";
-import { getUserId } from "../../../api/users";
 import { useAuth } from "../../../providers/AuthProvider";
 
 function PostPage() {

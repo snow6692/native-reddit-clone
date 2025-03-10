@@ -5,10 +5,30 @@ import { TablesInsert } from "../lib/supabase.types";
 export type CreatePostTypes = TablesInsert<"posts">;
 
 //posts with relations
+// const fetchPosts = async () => {
+//   const { data, error } = await supabase
+//     .from("posts")
+//     .select(
+//       "*, group:groups(*), user:users!posts_user_id_fkey(*)), upvotes(value.sum())"
+//     )
+
+//     .order("created_at", { ascending: false });
+
+//   if (error) {
+//     console.error(error);
+//     throw new Error(error.message);
+//   }
+//   console.log(data);
+
+//   return data;
+// };
+
 const fetchPosts = async () => {
   const { data, error } = await supabase
     .from("posts")
-    .select("*, group:groups(*), user:users!posts_user_id_fkey(*)")
+    .select(
+      "*, group:groups(*),  user:users!posts_user_id_fkey(*), upvotes(value)"
+    )
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -16,8 +36,15 @@ const fetchPosts = async () => {
     throw new Error(error.message);
   }
 
-  return data;
+  const formattedData = data.map((post) => ({
+    ...post,
+    upvotes:
+      post.upvotes?.reduce((sum, vote) => sum + (vote.value || 0), 0) ?? 0,
+  }));
+
+  return formattedData;
 };
+
 export function useGetPosts() {
   return useQuery({
     queryKey: ["posts"],
@@ -25,25 +52,28 @@ export function useGetPosts() {
   });
 }
 
-//get post by id
 const fetchPostById = async (id: string) => {
   const { data, error } = await supabase
     .from("posts")
-    .select("*, group:groups(*), user:users!posts_user_id_fkey(*)")
+    .select(
+      "*, group:groups(*), user:users!posts_user_id_fkey(*), upvotes(value.sum()) "
+    )
     .eq("id", id)
     .single();
+
   if (error) {
     console.error(error);
     throw new Error(error.message);
   }
-  return data;
+  const totalUpvotes = data.upvotes?.[0]?.sum ?? 0;
+  return { ...data, upvotes: totalUpvotes };
 };
+
 export function useGetPostById(id: string) {
   return useQuery({
     queryKey: ["post", id],
     queryFn: () => fetchPostById(id),
     enabled: !!id,
-    // staleTime: 3000,  (consider it up to date for 3 seconds  )
   });
 }
 
