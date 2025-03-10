@@ -3,6 +3,8 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Link } from "expo-router";
 import { PostWithGroupAndUser } from "../lib/redditTypes";
+import { useCreateUpvote, useSelectMyVote } from "../api/upvotes";
+import { useQueryClient } from "@tanstack/react-query";
 
 type PostListItemProps = {
   post: PostWithGroupAndUser;
@@ -13,9 +15,15 @@ export default function PostListItem({
   post,
   isDetailedPost,
 }: PostListItemProps) {
+  const { mutate } = useCreateUpvote();
+  const { data: myVote } = useSelectMyVote({ post_id: post.id });
   const ShowImage = isDetailedPost || post.image;
   const ShowDescription = isDetailedPost || !post.image;
-
+  const isUpvoted = myVote?.value === 1;
+  const isDownvoted = myVote?.value === -1;
+  const handleUpvote = (value: 1 | -1) => {
+    mutate({ post_id: post.id, value });
+  };
   return (
     <Link href={`post/${post.id}`} asChild>
       <Pressable
@@ -105,9 +113,10 @@ export default function PostListItem({
           <View style={{ flexDirection: "row", gap: 10 }}>
             <View style={[{ flexDirection: "row" }, styles.iconBox]}>
               <MaterialCommunityIcons
-                name="arrow-up-bold-outline"
+                onPress={() => handleUpvote(1)}
+                name={isUpvoted ? "arrow-up-bold" : "arrow-up-bold-outline"}
                 size={19}
-                color="black"
+                color={isUpvoted ? "crimson" : "black"}
               />
               <Text
                 style={{
@@ -128,9 +137,12 @@ export default function PostListItem({
                 }}
               />
               <MaterialCommunityIcons
-                name="arrow-down-bold-outline"
+                onPress={() => handleUpvote(-1)}
+                name={
+                  isDownvoted ? "arrow-down-bold" : "arrow-down-bold-outline"
+                }
                 size={19}
-                color="black"
+                color={isDownvoted ? "crimson" : "black"}
               />
             </View>
             <View style={[{ flexDirection: "row" }, styles.iconBox]}>
