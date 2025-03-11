@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import PostListItem from "../../../components/PostListItem";
 import Logout from "../../../components/Logout";
 import { useGetPosts } from "../../../api/posts";
