@@ -22,8 +22,15 @@ export default function PostListItem({
   const isUpvoted = myVote?.value === 1;
   const isDownvoted = myVote?.value === -1;
   const handleUpvote = (value: 1 | -1) => {
-    mutate({ post_id: post.id, value });
+    if (isUpvoted && value === 1) {
+      mutate({ post_id: post.id, value: -1 }); //  
+    } else if (isDownvoted && value === -1) {
+      mutate({ post_id: post.id, value: 1 }); //
+    } else {
+      mutate({ post_id: post.id, value });
+    }
   };
+
   return (
     <Link href={`post/${post.id}`} asChild>
       <Pressable

@@ -20,16 +20,14 @@ const createUpvote = async ({
   const { error } = await supabase
     .from("upvotes")
     .upsert([{ post_id, value, user_id }])
-    .select()
-    .single();
+    .select();
 
-  if (error) {
-    console.error("Failed to insert upvote:", error);
-  } else {
-    console.log("Upvote added successfully");
+  if (error && error.code !== "PGRST116") {
+    console.error("Error checking existing upvote:", error);
+    return;
   }
+  return console.log("Upvote upserted successfully");
 };
-
 export function useCreateUpvote() {
   const queryClient = useQueryClient();
 
@@ -51,11 +49,25 @@ export function useCreateUpvote() {
         value: newVote.value,
       });
 
+      queryClient.setQueryData(["posts"], (oldData: any) => {
+        if (!oldData) return oldData;
+        return oldData.map((post: any) => {
+          if (post.id === newVote.post_id) {
+            return {
+              ...post,
+              upvotes: (post.upvotes ?? 0) + newVote.value,
+            };
+          }
+          return post;
+        });
+      });
+
       return { previousVote };
     },
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts", "my-upvote"] });
     },
 
     onError: (_error, _newVote, context) => {
@@ -84,7 +96,7 @@ const selectMyVote = async ({ post_id }: { post_id: string }) => {
     .select("*")
     .eq("post_id", post_id)
     .eq("user_id", user_id)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error("Failed to insert upvote:", error);

@@ -4,30 +4,11 @@ import { TablesInsert } from "../lib/supabase.types";
 
 export type CreatePostTypes = TablesInsert<"posts">;
 
-//posts with relations
-// const fetchPosts = async () => {
-//   const { data, error } = await supabase
-//     .from("posts")
-//     .select(
-//       "*, group:groups(*), user:users!posts_user_id_fkey(*)), upvotes(value.sum())"
-//     )
-
-//     .order("created_at", { ascending: false });
-
-//   if (error) {
-//     console.error(error);
-//     throw new Error(error.message);
-//   }
-//   console.log(data);
-
-//   return data;
-// };
-
 const fetchPosts = async () => {
   const { data, error } = await supabase
     .from("posts")
     .select(
-      "*, group:groups(*),  user:users!posts_user_id_fkey(*), upvotes(value)"
+      "*, group:groups(*), user:users!posts_user_id_fkey(*), upvotes(value)"
     )
     .order("created_at", { ascending: false });
 
@@ -36,13 +17,11 @@ const fetchPosts = async () => {
     throw new Error(error.message);
   }
 
-  const formattedData = data.map((post) => ({
+  return data.map((post) => ({
     ...post,
     upvotes:
       post.upvotes?.reduce((sum, vote) => sum + (vote.value || 0), 0) ?? 0,
   }));
-
-  return formattedData;
 };
 
 export function useGetPosts() {
