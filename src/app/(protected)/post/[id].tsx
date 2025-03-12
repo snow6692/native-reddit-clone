@@ -21,6 +21,7 @@ import CommentListItem from "../../../components/CommentListItem";
 function PostPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [comment, setComment] = useState("");
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const { data: post, error, isLoading } = useGetPostById(id);
   const { mutate, isPending } = useDeletePost();
   const { session } = useAuth();
@@ -117,6 +118,8 @@ function PostPage() {
         }}
       >
         <TextInput
+          onFocus={() => setIsInputFocused(true)}
+          onBlur={() => setIsInputFocused(false)}
           placeholder="Join the conversation"
           style={{
             backgroundColor: "#E4E4E4",
@@ -127,27 +130,29 @@ function PostPage() {
           onChangeText={setComment}
           multiline
         />
-        <Pressable
-          style={{
-            backgroundColor: "#0d469b",
-            borderRadius: 15,
-            marginLeft: "auto",
-            marginTop: 15,
-            marginBottom: 15,
-          }}
-        >
-          <Text
+        {isInputFocused ? (
+          <Pressable
             style={{
-              color: "white",
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-              fontWeight: "bold",
-              fontSize: 13,
+              backgroundColor: "#0d469b",
+              borderRadius: 15,
+              marginLeft: "auto",
+              marginTop: 15,
+              marginBottom: 15,
             }}
           >
-            Reply
-          </Text>
-        </Pressable>
+            <Text
+              style={{
+                color: "white",
+                paddingVertical: 5,
+                paddingHorizontal: 10,
+                fontWeight: "bold",
+                fontSize: 13,
+              }}
+            >
+              Reply
+            </Text>
+          </Pressable>
+        ) : null}
       </View>
     </KeyboardAvoidingView>
   );
