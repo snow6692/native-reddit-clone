@@ -1,13 +1,17 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Pressable, FlatList } from "react-native";
 import { Entypo, Octicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Comment } from "../lib/uiTypes";
+import { useState } from "react";
 
 type CommentListItemProps = {
   comment: Comment;
+  depth: number;
 };
 
-const CommentListItem = ({ comment }: CommentListItemProps) => {
+const CommentListItem = ({ comment, depth }: CommentListItemProps) => {
+  const [isShowReplies, setIsShowReplies] = useState(false);
+
   return (
     <View
       style={{
@@ -17,6 +21,7 @@ const CommentListItem = ({ comment }: CommentListItemProps) => {
         paddingVertical: 5,
         gap: 10,
         borderLeftColor: "#E5E7EB",
+        borderLeftWidth: depth > 0 ? 1 : 0,
       }}
     >
       {/* User Info */}
@@ -78,6 +83,39 @@ const CommentListItem = ({ comment }: CommentListItemProps) => {
           />
         </View>
       </View>
+      {/* Show replies button */}
+      {comment.replies.length > 0 && !isShowReplies && depth < 5 ? (
+        <Pressable
+          onPress={() => setIsShowReplies(true)}
+          style={{
+            backgroundColor: "#EDEDED",
+            borderRadius: 2,
+            paddingVertical: 3,
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 12,
+              letterSpacing: 0.5,
+              fontWeight: "500",
+              color: "#545454",
+            }}
+          >
+            Show replies
+          </Text>
+        </Pressable>
+      ) : null}
+
+      {/* List of replies */}
+      {isShowReplies ? (
+        <FlatList
+          data={comment.replies}
+          renderItem={({ item }) => (
+            <CommentListItem comment={item} depth={depth + 1} />
+          )}
+        />
+      ) : null}
     </View>
   );
 };

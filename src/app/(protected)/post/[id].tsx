@@ -98,7 +98,7 @@ function PostPage() {
       <FlatList
         ListHeaderComponent={<PostListItem post={post} isDetailedPost />}
         data={postComments}
-        renderItem={({ item }) => <CommentListItem comment={item} />}
+        renderItem={({ item }) => <CommentListItem comment={item} depth={0} />}
       />
       <View
         style={{
