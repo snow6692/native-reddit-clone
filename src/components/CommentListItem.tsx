@@ -2,14 +2,19 @@ import { View, Text, Image, Pressable, FlatList } from "react-native";
 import { Entypo, Octicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Comment } from "../lib/uiTypes";
-import { useState } from "react";
+import { useState, memo } from "react";
 
 type CommentListItemProps = {
   comment: Comment;
   depth: number;
+  handleRepliedButtonPress: (commentId: string) => void;
 };
 
-const CommentListItem = ({ comment, depth }: CommentListItemProps) => {
+const CommentListItem = ({
+  comment,
+  depth,
+  handleRepliedButtonPress,
+}: CommentListItemProps) => {
   const [isShowReplies, setIsShowReplies] = useState(false);
 
   return (
@@ -60,7 +65,7 @@ const CommentListItem = ({ comment, depth }: CommentListItemProps) => {
           name="reply"
           size={16}
           color="#737373"
-          onPress={() => console.log("Reply button pressed")}
+          onPress={() => handleRepliedButtonPress(comment.id)}
         />
         <MaterialCommunityIcons
           name="trophy-outline"
@@ -112,7 +117,11 @@ const CommentListItem = ({ comment, depth }: CommentListItemProps) => {
         <FlatList
           data={comment.replies}
           renderItem={({ item }) => (
-            <CommentListItem comment={item} depth={depth + 1} />
+            <CommentListItem
+              comment={item}
+              depth={depth + 1}
+              handleRepliedButtonPress={handleRepliedButtonPress}
+            />
           )}
         />
       ) : null}
@@ -120,4 +129,4 @@ const CommentListItem = ({ comment, depth }: CommentListItemProps) => {
   );
 };
 
-export default CommentListItem;
+export default memo(CommentListItem);

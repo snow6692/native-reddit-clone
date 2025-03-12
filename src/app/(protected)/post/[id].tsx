@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import {
   Alert,
@@ -22,6 +22,7 @@ function PostPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [comment, setComment] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const inputRef = useRef<TextInput | null>(null);
   const { data: post, error, isLoading } = useGetPostById(id);
   const { mutate, isPending } = useDeletePost();
   const { session } = useAuth();
@@ -34,7 +35,6 @@ function PostPage() {
   const postComments = comments.filter(
     (comment) => comment.post_id === "post-1"
   );
-  console.log(postComments);
   const handelRemovePost = async () => {
     mutate(post.id, {
       onSuccess: () => {
@@ -66,6 +66,11 @@ function PostPage() {
       ]
     );
   };
+
+  const handleRepliedButtonPress = useCallback((commentId: string) => {
+    console.log(commentId);
+    inputRef.current?.focus();
+  }, []);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -98,7 +103,13 @@ function PostPage() {
       <FlatList
         ListHeaderComponent={<PostListItem post={post} isDetailedPost />}
         data={postComments}
-        renderItem={({ item }) => <CommentListItem comment={item} depth={0} />}
+        renderItem={({ item }) => (
+          <CommentListItem
+            comment={item}
+            depth={0}
+            handleRepliedButtonPress={handleRepliedButtonPress}
+          />
+        )}
       />
       <View
         style={{
@@ -118,6 +129,7 @@ function PostPage() {
         }}
       >
         <TextInput
+          ref={inputRef}
           onFocus={() => setIsInputFocused(true)}
           onBlur={() => setIsInputFocused(false)}
           placeholder="Join the conversation"
