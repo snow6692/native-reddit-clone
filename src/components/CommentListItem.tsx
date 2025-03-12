@@ -113,18 +113,17 @@ const CommentListItem = ({
       ) : null}
 
       {/* List of replies */}
-      {isShowReplies ? (
-        <FlatList
-          data={comment.replies}
-          renderItem={({ item }) => (
+
+      {isShowReplies
+        ? comment.replies.map((reply) => (
             <CommentListItem
-              comment={item}
+              key={reply.id}
+              comment={reply}
               depth={depth + 1}
               handleRepliedButtonPress={handleRepliedButtonPress}
             />
-          )}
-        />
-      ) : null}
+          ))
+        : null}
     </View>
   );
 };

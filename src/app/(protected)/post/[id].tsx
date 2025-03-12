@@ -67,10 +67,14 @@ function PostPage() {
     );
   };
 
-  const handleRepliedButtonPress = useCallback((commentId: string) => {
+  // const handleRepliedButtonPress = useCallback((commentId: string) => {
+  //   console.log(commentId);
+  //   inputRef.current?.focus();
+  // }, []);
+  const handleRepliedButtonPress = (commentId: String) => {
     console.log(commentId);
     inputRef.current?.focus();
-  }, []);
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -101,6 +105,7 @@ function PostPage() {
       />
 
       <FlatList
+        keyExtractor={(item) => item.id}
         ListHeaderComponent={<PostListItem post={post} isDetailedPost />}
         data={postComments}
         renderItem={({ item }) => (
